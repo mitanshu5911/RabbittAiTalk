@@ -8,20 +8,16 @@ const upload = multer({ dest: "uploads/" });
 
 export const uploadMiddleware = upload.single("file");
 
-export const uploadCSV = (req, res) => {
-    const results = [];
-    fs.createReadStream(req.file.path)
-        .pipe(csv())
-        .on("data", (data) => results.push(data))
-        .on("end", () => {
-            setCSVData(results);
+export const loadDefaultCSV = () => {
+  const results = [];
 
-            res.json({
-                message: "CSV uploaded successfully",
-                rows: results.length,
-                columns: Object.keys(results[0]),
-            });
-        })
+  fs.createReadStream("./src/data/lemon_tree_hotel_customer_data.csv")
+    .pipe(csv())
+    .on("data", (data) => results.push(data))
+    .on("end", () => {
+      setCSVData(results);
+      console.log("Default dataset loaded:", results.length, "rows");
+    });
 };
 
 
