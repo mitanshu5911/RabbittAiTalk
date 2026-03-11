@@ -3,6 +3,8 @@ import csv from "csv-parser";
 import fs from 'fs';
 import { setCSVData, getCSVData } from '../utils/csvStore.js';
 import { groq } from '../utils/groqClient.js';
+import path from "path";
+import { fileURLToPath } from "url";
 
 const upload = multer({ dest: "uploads/" });
 
@@ -11,7 +13,11 @@ export const uploadMiddleware = upload.single("file");
 export const loadDefaultCSV = () => {
   const results = [];
 
-  fs.createReadStream("./src/data/lemon_tree_hotel_customer_data.csv")
+   const __filename = fileURLToPath(import.meta.url);
+ const __dirname = path.dirname(__filename);
+
+  const filePath = path.join(__dirname, "../data/lemon_tree_hotel_customer_data.csv");
+  fs.createReadStream(filePath)
     .pipe(csv())
     .on("data", (data) => results.push(data))
     .on("end", () => {
